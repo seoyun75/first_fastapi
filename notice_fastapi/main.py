@@ -1,26 +1,36 @@
-from inmemory import NoticeDB
-from notice import Notice
-from fastapi import FastAPI
+from datetime import datetime
+from 
+
+from fastapi import FastAPI, HTTPException
+
+from inmemory import PostDB
+from post import Post
  
 app = FastAPI()
 
 @app.get("/")
 async def root():
-    notice_list = NoticeDB()
-    print(notice_list.notice_list)
     return {"message" : "Hello"}
 
-@app.post("/create_notice")
-async def create_notice(notice : Notice):
-    notice_list = NoticeDB().notice_list
-    notice_list[len(notice_list)+1] = notice
-    return notice
+@app.post("/post", status_code=201)
+async def create_post(post : Post):
+    post_list = PostDB().post_list
 
-@app.get("/get_list")
+    post.create_date = datetime.now()
+
+    post_list[len(post_list)+1] = post
+    return post
+
+@app.get("/get_list" status_code=200)
 async def get_list():
     
-    return NoticeDB().notice_list
+    return PostDB().post_list
 
-@app.get("/get_notice/{id}")
-async def get_notice(id:int):
-    return NoticeDB().notice_list[id]
+@app.get("/post/{id}" status_code=200)
+async def post(id:int):
+    post_list = PostDB().post_list
+    if id not in post_list:
+        raise HTTPException(status_code=404, detail="존재하지 않는 게시글입니다.")
+
+    return post_list[id]
+

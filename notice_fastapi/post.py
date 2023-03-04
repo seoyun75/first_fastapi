@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class Notice(BaseModel):
+class Post(BaseModel):
     user : str
     title : str
     content : str 
-    # create_date : datetime
+    create_date : datetime | None = None
