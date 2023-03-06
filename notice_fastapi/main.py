@@ -11,7 +11,7 @@ app = FastAPI()
 async def root():
     return Response(content="ok",status_code=status.HTTP_200_OK)
 
-@app.get("/post")
+@app.get("/posts")
 async def get_postlist():
     post_list = PostDB().post_list
     """
@@ -22,7 +22,7 @@ async def get_postlist():
     """
     return Response(content=post_list, status_code=status.HTTP_200_OK)
 
-@app.get("/post/{id}")
+@app.get("/posts/{id}")
 async def get_post(id:int):
     """
     id 값에 해당하는 게시물 반환합니다.
@@ -45,7 +45,7 @@ async def get_post(id:int):
 
     return Response(content=post_list[id], status_code=status.HTTP_200_OK)
 
-@app.post("/post", status_code=201)
+@app.post("/posts", status_code=201)
 async def create_post(post : Post):
     """
     새로운 게시물을 생성합니다.
@@ -73,7 +73,7 @@ async def create_post(post : Post):
     post_list[len(post_list)+1] = post
     return Response(content=post, status_code=status.HTTP_201_CREATED)
 
-@app.put("/update/{id}")
+@app.put("/posts/{id}")
 async def update_post(id:int, post : Post):
     """
     기존 게시물의 내용을 변경합니다.
@@ -107,7 +107,7 @@ async def update_post(id:int, post : Post):
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-@app.delete("/post/{id}")
+@app.delete("/posts/{id}")
 async def delete_post(id:int):
     post_list = PostDB().post_list
     post_list.pop(id)
