@@ -1,7 +1,8 @@
+from typing import Dict
 from post import Post
 
 class PostDB():
-    post_list : dict[int, Post]
+    post_list : Dict[int, Post]
     
     def __new__(cls, *args, **kwargs):
         if not hasattr(cls, 'instance'):

@@ -3,3 +3,5 @@ __pycache__/
 notice_fastapi/__pycache__/
 
 venv/
+
+alog.py
