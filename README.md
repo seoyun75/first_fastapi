@@ -13,9 +13,11 @@
 *아래의 내용은 window 사용자를 위한 가이드입니다.*
  1. git clone
     > git clone https://github.com/seoyun75/first-fastapi.git
- 2. Potry를 사용해 Install 하기
+ 2. first-fastapi 디렉토리로 이동
+   
+ 3. Potry를 사용해 Install 하기
     >poetry install 
- 3. 디렉토리의 notice_fastapi로 이동
+ 4. 디렉토리의 notice_fastapi로 이동
     >cd .\notice_fastapi
- 4. 실행
+ 5. 실행
     >poetry run uvicorn main:app

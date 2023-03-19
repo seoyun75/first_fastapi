@@ -1,8 +1,8 @@
-from pydantic import BaseModel
-from datetime import datetime 
+from datetime import datetime
 from typing import Optional
 
-from sqlmodel import SQLModel, Field
+from pydantic import BaseModel
+from sqlmodel import Field, SQLModel
 
 
 class Post(SQLModel, table=True):
@@ -12,10 +12,10 @@ class Post(SQLModel, table=True):
     content : str 
     create_date : Optional[datetime] = None
 
-class PostUpdate(BaseModel):
-    user : str
-    title : str
-    content : str 
+class PostUpdate(SQLModel):
+    user : Optional[str]
+    title : Optional[str]
+    content : Optional[str] 
 
 class PostCreate(BaseModel):
     id : Optional[int] = Field(default=None, primary_key=True)

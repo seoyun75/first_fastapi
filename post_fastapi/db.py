@@ -1,9 +1,8 @@
 from typing import Optional
 
-from sqlmodel import Session, create_engine, SQLModel
-from sqlalchemy.ext.declarative import declarative_base
-
 from post import Post
+from sqlalchemy.ext.declarative import declarative_base
+from sqlmodel import Session, SQLModel, create_engine
 
 sqlite_url = "sqlite:///database.db"
 
