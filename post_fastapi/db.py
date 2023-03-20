@@ -1,6 +1,6 @@
 from typing import Optional
 
-from post import Post
+from domain.post import Post
 from sqlalchemy.ext.declarative import declarative_base
 from sqlmodel import Session, SQLModel, create_engine
 
@@ -12,8 +12,10 @@ engine = create_engine(sqlite_url, echo=True, connect_args=connect_args)
 
 Base = declarative_base()
 
+
 def init_db():
     SQLModel.metadata.create_all(engine)
+
 
 def get_session():
     with Session(engine) as session:
