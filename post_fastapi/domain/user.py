@@ -13,7 +13,7 @@ from datetime import datetime
 
 from sqlmodel import Field, SQLModel
 
-class User(SQLModel, table=True, extend_existing=True):
+class User(SQLModel, table=True):
     id: Optional[str] = Field(default=None, primary_key=True)
     password: str
     nickname: str
