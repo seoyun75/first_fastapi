@@ -13,6 +13,7 @@ dependency-injector = "^4.37.0"
 sqlmodel = "^0.0.8"
 isort = "^5.12.0"
 black = "^23.1.0"
+pre-commit = "^3.2.1"
 
 
 [build-system]
