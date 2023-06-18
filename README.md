@@ -54,5 +54,5 @@ FastAPI와 SqlModel을 사용하여 만든 게시판API입니다.
 
 ## API Diagram
 ---
-![캡처](/diagram.PNG)
+![캡처](/diagram.png)
 <!-- <img src="/uploads/1848994ad25765da30fa8ef3684c67bc/캡처.PNG"  width="700" height="370"> -->
