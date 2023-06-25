@@ -1,7 +1,10 @@
-# FastAPI를 사용한 간단한 게시판 프로젝 ![python Badge](https://img.shields.io/github/pipenv/locked/python-version/seoyun75/post-fastapi)
+# FastAPI를 사용한 간단한 게시판 프로젝트 ![Python Badge](https://img.shields.io/badge/python-3.11-blue)
 
 
-FastAPI와 SqlModel을 사용하여 만든 게시판API입니다.
+
+
+
+[FastAPI](https://fastapi.tiangolo.com/ko/)와 [SqlModel](https://sqlmodel.tiangolo.com/)을 사용하여 만든 게시판 서버API입니다.
 
 ## 기능
     1. 게시글
@@ -24,35 +27,45 @@ FastAPI와 SqlModel을 사용하여 만든 게시판API입니다.
        4. 댓글 수정
        5. 댓글 삭제
 
+[API문서](http://127.0.0.1:8000/docs)에서 자세한 확인이 가능합니다.
 ## 다운로드
 ---
 
-*아래의 내용은 window 사용자를 위한 가이드입니다.*
+***아래의 내용은 windows 사용자를 위한 가이드입니다.***
 
  0. [poetry](https://python-poetry.org/docs/#installation) 와 [pyenv](https://github.com/pyenv-win/pyenv-win)를 사용하여 구성한 프로젝트입니다. install 후 가이드에 따라주세요
-    ```
-    <!-- Powershell -->
-
-    <!-- poetry -->
-    (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
-
-    <!-- pyenv -->
-    Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
-    ```
+   - poetry
+      ```
+      $ (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
+      ```
+   - pyenv
+      ```
+      $ Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &"./install-pyenv-win.ps1"
+      ```
 
  1. git clone
-    ```git clone https://github.com/seoyun75/post-fastapi.git ```
+    ``` 
+    $ git clone https://github.com/seoyun75/post-fastapi.git 
+    ```
  2. post-fastapi 디렉토리로 이동
-    ``` cd .\post-fastapi ```
+    ``` 
+    $ cd .\post-fastapi 
+    ```
  3. 설치된 Potry를 사용해 Install 하기
-    ``` poetry install```
+    ``` 
+    $ poetry install
+    ```
  4. 디렉토리의 post_fastapi로 이동
-    ```cd .\post_fastapi```
+    ```
+    $ cd .\post_fastapi
+    ```
  5. 실행
-    ```poetry run uvicorn main:app```
+    ```
+    $ poetry run uvicorn main:app
+    ```
 
 
 ## API Diagram
 ---
-![캡처](/diagram.png)
+![캡처](/diagram.PNG)
 <!-- <img src="/uploads/1848994ad25765da30fa8ef3684c67bc/캡처.PNG"  width="700" height="370"> -->
