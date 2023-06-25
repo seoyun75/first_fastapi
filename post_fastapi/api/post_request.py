@@ -3,6 +3,7 @@ from typing import Optional
 
 from sqlmodel import Field, SQLModel
 
+
 class PostUpdate(SQLModel):
     user: Optional[str]
     title: Optional[str]

@@ -1,17 +1,14 @@
 from datetime import datetime
 from typing import List
 
-from fastapi import Depends, APIRouter, Response, status
+from api.post_request import PostUpdate
+from domain.post import Post
+from fastapi import APIRouter, Depends, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-
-from domain.post import Post
 from service.post_service import PostService
-from api.post_request import PostUpdate
 
-router = APIRouter(
-    prefix="/posts"
-)
+router = APIRouter(prefix="/posts")
 
 
 @router.get("/healthcheck")

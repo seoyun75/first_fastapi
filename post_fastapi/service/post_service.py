@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import List
 
-from fastapi import Depends
-from domain.post import Post
 from api.post_request import PostUpdate
+from domain.post import Post
+from fastapi import Depends
 from repository.post_repository import PostRepository
 
 
@@ -25,8 +25,7 @@ class PostService:
 
         db_post = self.post_repo.get_one(id)
 
-        return self.post_repo.update(
-            self.replace_postdata(update_data, db_post))
+        return self.post_repo.update(self.replace_postdata(update_data, db_post))
 
     def delete_post(self, id: int):
         post = self.get_post(id)
@@ -37,5 +36,5 @@ class PostService:
 
         for key, value in data.items():
             setattr(db_post, key, value)
-        
+
         return db_post

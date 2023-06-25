@@ -1,11 +1,10 @@
-
-from sqlmodel import Session, select
-from fastapi import Depends
-
-from domain.comment import Comment
 from db import get_session
+from domain.comment import Comment
+from fastapi import Depends
+from sqlmodel import Session, select
 
-class CommentRepository():
+
+class CommentRepository:
     def __init__(self, session: Session = Depends(get_session)):
         self.session = session
 
@@ -15,14 +14,18 @@ class CommentRepository():
         self.session.refresh(comment)
 
         return self.get_one(comment.id)
-    
-    def get_by_userid(self, id:str, page:int, limit:int):
-        return self.session.exec(select(Comment).where(Comment.author_id == id).offset(page).limit(limit)).all()
 
-    def get_by_postid(self, id:str, page:int, limit:int):
-        return self.session.exec(select(Comment).where(Comment.post_id == id).offset(page).limit(limit)).all()
+    def get_by_userid(self, id: str, page: int, limit: int):
+        return self.session.exec(
+            select(Comment).where(Comment.author_id == id).offset(page).limit(limit)
+        ).all()
 
-    def delete(self, id:str):
+    def get_by_postid(self, id: str, page: int, limit: int):
+        return self.session.exec(
+            select(Comment).where(Comment.post_id == id).offset(page).limit(limit)
+        ).all()
+
+    def delete(self, id: str):
         db_comment = self.session.exec(select(Comment).where(Comment.id == id)).one()
         self.session.delete(db_comment)
 

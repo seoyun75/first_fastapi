@@ -1,9 +1,9 @@
-from fastapi import Depends, HTTPException
-
-from repository.comment_repository import CommentRepository
 from domain.comment import Comment
+from fastapi import Depends, HTTPException
+from repository.comment_repository import CommentRepository
 
-class CommentService():
+
+class CommentService:
     def __init__(self, repository: CommentRepository = Depends()):
         self.repository = repository
         self.page_limit = 3
@@ -11,9 +11,9 @@ class CommentService():
     def create_comment(self, comment: Comment):
         return self.repository.create(comment)
 
-    def get_comment_by_postid(self, post_id: int, page:int):
-        offset = (page -1) * self.page_limit
-        
+    def get_comment_by_postid(self, post_id: int, page: int):
+        offset = (page - 1) * self.page_limit
+
         return self.repository.get_by_postid(post_id, offset, self.page_limit)
 
     def update_comment(self, comment: Comment):
@@ -25,7 +25,7 @@ class CommentService():
         self.replace_data(db_comment, comment)
 
         return self.repository.update(db_comment)
-    
+
     def delete_comment(self, id: str):
         self.repository.delete(id)
 
