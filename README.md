@@ -4,7 +4,7 @@
 
 
 
-[FastAPI](https://fastapi.tiangolo.com/ko/)와 [SqlModel](https://sqlmodel.tiangolo.com/)을 사용하여 만든 게시판 서버API입니다.
+### [FastAPI](https://fastapi.tiangolo.com/ko/)와 [SqlModel](https://sqlmodel.tiangolo.com/)을 사용하여 만든 게시판 서버API입니다.
 
 ## 기능
     1. 게시글
@@ -33,7 +33,7 @@
 
 ***아래의 내용은 windows 사용자를 위한 가이드입니다.***
 
- 0. [poetry](https://python-poetry.org/docs/#installation) 와 [pyenv](https://github.com/pyenv-win/pyenv-win)를 사용하여 구성한 프로젝트입니다. install 후 가이드에 따라주세요
+0. [poetry](https://python-poetry.org/docs/#installation) 와 [pyenv](https://github.com/pyenv-win/pyenv-win)를 사용하여 구성한 프로젝트입니다. install 후 가이드에 따라주세요
    - poetry
       ```
       $ (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -
@@ -44,28 +44,28 @@
       ```
 
  1. git clone
-    ``` 
+    ```sh
     $ git clone https://github.com/seoyun75/post-fastapi.git 
     ```
  2. post-fastapi 디렉토리로 이동
-    ``` 
+    ```sh 
     $ cd .\post-fastapi 
     ```
  3. 설치된 Potry를 사용해 Install 하기
-    ``` 
+    ```sh 
     $ poetry install
     ```
  4. 디렉토리의 post_fastapi로 이동
-    ```
+    ```sh
     $ cd .\post_fastapi
     ```
  5. 실행
-    ```
+    ```sh
     $ poetry run uvicorn main:app
     ```
 
 
 ## API Diagram
 ---
-![캡처](/diagram.PNG)
+![캡처](/diagram.png)
 <!-- <img src="/uploads/1848994ad25765da30fa8ef3684c67bc/캡처.PNG"  width="700" height="370"> -->
