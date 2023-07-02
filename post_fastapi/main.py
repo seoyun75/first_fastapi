@@ -1,7 +1,6 @@
-from api import comment, post, user
+from api import auth, comment, post, session, user
 from db import init_db
 from fastapi import FastAPI
-from fastapi.exceptions import RequestValidationError
 
 app = FastAPI()
 
@@ -12,6 +11,7 @@ def on_startup():
 
 
 app.include_router(user.router, tags=["users"])
+app.include_router(auth.router, tags=["auth"])
 app.include_router(post.router, tags=["posts"])
 app.include_router(comment.router, tags=["comments"])
 
