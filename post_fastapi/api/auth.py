@@ -1,36 +1,27 @@
-import logging
-from datetime import datetime
-from typing import List
-from uuid import UUID, uuid4
+from typing import Annotated
+from uuid import UUID
 
-from api.session import Session, backend
+from api.session import SessionData, SessionService
+from api.user_dto import UserRequest
 from domain.user import User
-from fastapi import APIRouter, Depends, Header, Request, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from fastapi_sessions.backends.implementations import InMemoryBackend
-from fastapi_sessions.frontends.implementations import CookieParameters, SessionCookie
-from fastapi_sessions.session_verifier import SessionVerifier
-from pydantic import BaseModel
 from service.user_service import UserService
 
 router = APIRouter(prefix="/auth")
+inmemory = InMemoryBackend[UUID, SessionData]()
 
 
-class SessionEle:
-    def __init__(self) -> None:
-        self.session = Session()
-        self.backend = backend
-
-
-@router.post("/signup")
+@router.post("/signup", status_code=200)
 async def signup(
     user: User,
-    response: Response,
-    service: UserService = Depends(),
-    session_ele=Depends(SessionEle),
+    service=Depends(UserService),
 ):
     """
+
+    ver 체크(x)-> 회원가입 프로세스 -> 세션저장 -> 세션 id 반환
     회원가입
 
     Parameters :
@@ -46,19 +37,19 @@ async def signup(
             nickname : 닉네임
             created_at : 생성일자
     """
-    # new_user = service.create_user(user)
-    session_id = await session_ele.session.create_session(
-        service.create_user(user).id, response, session_ele.backend
-    )
+    new_user = service.create_user(user)
     return JSONResponse(
-        content=jsonable_encoder(user.id + "회원가입 성공"),
-        headers=response.headers,
-        status_code=status.HTTP_201_CREATED,
+        content=jsonable_encoder("회원가입 성공"), status_code=status.HTTP_201_CREATED
     )
 
 
-@router.post("/signin")
-async def signin(id: str, password: str, service: UserService = Depends()):
+@router.post("/signin", status_code=200)
+async def signin(
+    user: UserRequest,
+    response: Response,
+    service=Depends(UserService),
+    session=Depends(SessionService),
+):
     """
     로그인
 
@@ -73,40 +64,36 @@ async def signin(id: str, password: str, service: UserService = Depends()):
             nickname : 닉네임
             created_at : 생성일자
     """
-    user = User()
-    user.id = id
-    user.password = password
     signin_user = service.signin(user)
+    session_data = await session.create_session(signin_user.id, response, inmemory)
     return JSONResponse(
-        content=jsonable_encoder(signin_user), status_code=status.HTTP_200_OK
+        content=jsonable_encoder(session_data), status_code=status.HTTP_200_OK
     )
 
 
-@router.put("/update")
-async def update(user: User, service: UserService = Depends()):
+@router.delete("/signout", status_code=206)
+async def delete(request: Request, session=Depends(SessionService)):
     """
-    유저 정보 수정
+    유저 탈퇴
 
     Parameters :
-        User :
-            id : 유저id
-            password : 비밀번호
-            nickname : 닉네임
-
-    Returns:
-        User :
-            id : 유저id
-            password : 비밀번호
-            nickname : 닉네임
-            created_at : 생성일자
+        id : 유저id
+        password : 비밀번호
     """
-    signin_user = service.update_user(user)
+    session.del_session(request, inmemory)
+    return JSONResponse(content=None, status_code=status.HTTP_206_PARTIAL_CONTENT)
+
+
+@router.get("/userid")
+async def delete(request: Request, session=Depends(SessionService)):
+    user_data = await session.check(request.headers["session_id"], inmemory)
+
     return JSONResponse(
-        content=jsonable_encoder(signin_user), status_code=status.HTTP_200_OK
+        content=jsonable_encoder(user_data), status_code=status.HTTP_200_OK
     )
 
 
-@router.delete("/delete")
+@router.delete("/user", status_code=204)
 async def delete(id: str, password: str, service: UserService = Depends()):
     """
     유저 탈퇴
@@ -120,17 +107,3 @@ async def delete(id: str, password: str, service: UserService = Depends()):
     user.password = password
     service.delete_user(user)
     return JSONResponse(content=None, status_code=status.HTTP_204_NO_CONTENT)
-
-
-@router.delete("/signout")
-async def delete(request: Request, session=Depends(SessionEle)):
-    """
-    유저 탈퇴
-
-    Parameters :
-        id : 유저id
-        password : 비밀번호
-    """
-    print(request.get("session_id"))
-    await session.session.del_session(request)
-    return JSONResponse(content=None, status_code=status.HTTP_200_OK)

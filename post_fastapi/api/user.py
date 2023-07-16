@@ -11,6 +11,30 @@ from service.user_service import UserService
 router = APIRouter(prefix="/users")
 
 
+@router.put("/update", status_code=200)
+async def update(user: User, service: UserService = Depends()):
+    """
+    유저 정보 수정
+
+    Parameters :
+        User :
+            id : 유저id
+            password : 비밀번호
+            nickname : 닉네임
+
+    Returns:
+        User :
+            id : 유저id
+            password : 비밀번호
+            nickname : 닉네임
+            created_at : 생성일자
+    """
+    signin_user = service.update_user(user)
+    return JSONResponse(
+        content=jsonable_encoder(signin_user), status_code=status.HTTP_200_OK
+    )
+
+
 @router.get("/posts")
 async def get_posts(id: str, page: int, service: UserService = Depends()):
     """
