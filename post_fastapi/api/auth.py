@@ -24,7 +24,7 @@ async def signin(
 
     Returns:
         User :
-            id : 유저id
+            id : 유저idd
             password : 비밀번호
             nickname : 닉네임
             created_at : 생성일자

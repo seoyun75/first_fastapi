@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 
 database.db
-./database.dgitb
+./database.db
 
 # C extensions
 *.so
@@ -163,5 +163,5 @@ cython_debug/
 #.idea/
 
 #test file
-post_fastapi\api\test_api.py
+.\post_fastapi\api\test_api.py
 post_fastapi\service\test.py

@@ -1,6 +1,7 @@
-from api import auth, comment, post, session, user
+from api import auth, comment, post, user
+from click import UUID
 from db import init_db
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 
 app = FastAPI()
 

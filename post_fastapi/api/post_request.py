@@ -9,3 +9,10 @@ class PostUpdate(SQLModel):
     title: Optional[str]
     content: Optional[str]
     updated_at: datetime = Field(default_factory=datetime.today)
+
+
+class CreatePost(SQLModel):
+    id: Optional[int] = Field(default=None, primary_key=True)
+    title: Optional[str]
+    content: Optional[str]
+    updated_at: datetime = Field(default_factory=datetime.today)
