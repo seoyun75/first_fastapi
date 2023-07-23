@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from service.post_service import PostService
+from tool.session import verify_session
 
 router = APIRouter(prefix="/posts")
 
@@ -31,7 +32,7 @@ async def get_posts(post_service: PostService = Depends()):
 
 
 @router.get("/{id}", response_model=Post, status_code=status.HTTP_200_OK)
-async def get_one(id: int, post_service: PostService = Depends()):
+async def get_post(id: int, post_service: PostService = Depends()):
     """
     id 값에 해당하는 게시물 반환합니다.
 
@@ -54,7 +55,11 @@ async def get_one(id: int, post_service: PostService = Depends()):
 
 
 @router.post("", response_model=Post, status_code=status.HTTP_201_CREATED)
-async def create(post: Post, post_service: PostService = Depends()):
+async def create(
+    post: Post,
+    user: str = Depends(verify_session),
+    post_service: PostService = Depends(),
+):
     """
     새로운 게시물을 생성합니다.
 
@@ -73,6 +78,8 @@ async def create(post: Post, post_service: PostService = Depends()):
 
 
     """
+    post.user = user.username
+    print(post)
     post = post_service.create_post(post)
 
     return JSONResponse(
