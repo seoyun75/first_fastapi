@@ -39,7 +39,9 @@ async def signup(
     )
 
 
-@router.put("/user", status_code=status.HTTP_200_OK)
+@router.put(
+    "/user", status_code=status.HTTP_200_OK
+)  #! put 에 안쓰고 users/{user_id} - user_id 를 통해
 async def update(user: User, service: UserService = Depends()):
     """
     유저 정보 수정
@@ -63,8 +65,11 @@ async def update(user: User, service: UserService = Depends()):
     )
 
 
-@router.get("/posts", status_code=status.HTTP_200_OK)
-async def get_posts(id: str, page: int, service: UserService = Depends()):
+@router.get("/posts", status_code=status.HTTP_200_OK)  # 계층 구조에 따라서 작성 posts?user_id
+# 식별자를 path 에 넣고 property는 쿼리 파라미터
+async def get_posts(
+    id: str, page: int, service: UserService = Depends()
+):  # id 라고 안하고 명확하게 작정
     """
     유저가 작성한 게시글 목록
 
@@ -100,7 +105,9 @@ async def get_comments(id: str, page: int, service: UserService = Depends()):
     )
 
 
-@router.delete("/user", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete(
+    "/user", status_code=status.HTTP_204_NO_CONTENT
+)  # ! DELETE users/ + token
 async def delete(id: str, password: str, service: UserService = Depends()):
     """
     유저 탈퇴
