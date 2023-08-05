@@ -10,7 +10,6 @@ class AuthRepository:
         self.session = session
 
     def get_target(self, object: Comment | Post):
-        print("get_target")
         return self.session.get(type(object), object.id)
 
     def delete(self, id: str):
