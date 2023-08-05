@@ -38,7 +38,7 @@ class PostRepository:
         self.session.delete(post)
         self.session.commit()
 
-    def get_by_userid(self, id: str, offset: int, limit: int):
+    def get_by_userid(self, id: str, offset: int, limit: int) -> List[Post]:
         return self.session.exec(
             select(Post)
             .where(Post.user == id)

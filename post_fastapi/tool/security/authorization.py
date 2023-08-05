@@ -8,7 +8,7 @@ class Authorization:
 
     def verify_authority(self, object, user_id: str | int) -> None:
         target = self.auth_repository.get_target(object)
-        print(target)
+
         if not target:
             raise Exception(args="No Content")
         elif target.user_id != user_id.user_id:

@@ -7,14 +7,21 @@ from fastapi import APIRouter, Depends, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from service.post_service import PostService
-from tool.session import verify_session
+from tool.security.authorization import Authorization
+from tool.session import SessionData, verify_session
 
 router = APIRouter(prefix="/posts")
 
 
-@router.get(
-    "", status_code=status.HTTP_200_OK, response_model=List[Post]
-)  # 파라미터의 순서 일관된게 맞추기
+def verify_authority_dependency(
+    post_id: str,
+    session_data: SessionData = Depends(verify_session),
+    auth=Depends(Authorization),
+):
+    return auth.verify_authority(Post(id=post_id), session_data)
+
+
+@router.get("", response_model=List[Post], status_code=status.HTTP_200_OK)
 async def get_posts(post_service: PostService = Depends()):
     """
     게시글id와 게시글 전체를 반환합니다.
@@ -27,24 +34,22 @@ async def get_posts(post_service: PostService = Depends()):
     return JSONResponse(content=jsonable_encoder(posts), status_code=status.HTTP_200_OK)
 
 
-@router.get("/{id}", response_model=Post, status_code=status.HTTP_200_OK)
-async def get_post(id: int, post_service: PostService = Depends()):
+@router.get("/{post_id}", response_model=Post, status_code=status.HTTP_200_OK)
+async def get_post(post_id: int, post_service: PostService = Depends()):
     """
-        id 값에 해당하는 게시물 반환합니다.
+    id 값에 해당하는 게시물 반환합니다.
 
-        Parameters :
-            id : 게시물의 id
+    Parameters :
+        id : 게시물의 id
 
-        Return :
-            Post :
-                user: 작성자
-                title: 제목
-                content : 글 내용
-                create_date : 생성 시간
-    #!의미 없는 개행 삭제
-
+    Return :
+        Post :
+            user: 작성자
+            title: 제목
+            content : 글 내용
+            create_date : 생성 시간
     """
-    post = post_service.get_post(id)
+    post = post_service.get_post(post_id)
     post_json = jsonable_encoder(post)
 
     return JSONResponse(content=post_json, status_code=status.HTTP_200_OK)
@@ -53,7 +58,7 @@ async def get_post(id: int, post_service: PostService = Depends()):
 @router.post("", response_model=Post, status_code=status.HTTP_201_CREATED)
 async def create(
     post: Post,
-    user: str = Depends(verify_session),  #! user, user_id 이름 맞추기
+    session_data: SessionData = Depends(verify_session),
     post_service: PostService = Depends(),
 ):
     """
@@ -74,7 +79,7 @@ async def create(
 
 
     """
-    post.user = user.username
+    post.user_id = session_data.user_id
     post = post_service.create_post(post)
 
     return JSONResponse(
@@ -82,8 +87,14 @@ async def create(
     )
 
 
-@router.patch("/{id}", status_code=status.HTTP_200_OK)
-async def update_post(id: int, post: PostUpdate, post_service: PostService = Depends()):
+@router.patch(
+    "/{post_id}",
+    dependencies=[Depends(verify_authority_dependency)],
+    status_code=status.HTTP_200_OK,
+)
+async def update_post(
+    post_id: int, post: PostUpdate, post_service: PostService = Depends()
+):
     """
     기존 게시물의 내용을 변경합니다.
 
@@ -102,12 +113,16 @@ async def update_post(id: int, post: PostUpdate, post_service: PostService = Dep
 
 
     """
-    post = post_service.update_post(id, post)  # 해당 유저만 수정가능하게 수정()
+    post = post_service.update_post(post_id, post)
 
     return JSONResponse(content=jsonable_encoder(post), status_code=status.HTTP_200_OK)
 
 
-@router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete(id: int, post_service: PostService = Depends()):
-    post_service.delete_post(id)
+@router.delete(
+    "/{post_id}",
+    dependencies=[Depends(verify_authority_dependency)],
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete(post_id: int, post_service: PostService = Depends()):
+    post_service.delete_post(post_id)
     return Response(status_code=status.HTTP_204_NO_CONTENT)
