@@ -1,13 +1,20 @@
-from datetime import datetime
-from typing import List
-
 from domain.user import User
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from service.user_service import UserService
+from tool.security.authorization import Authorization
+from tool.session import SessionData, verify_session
 
 router = APIRouter(prefix="/users")
+
+
+def verify_authority_dependency(
+    user: User,
+    session_data: SessionData = Depends(verify_session),
+    auth=Depends(Authorization),
+):
+    return auth.verify_authority(user, session_data.user_id)
 
 
 @router.post("/signup", status_code=status.HTTP_201_CREATED)
@@ -16,8 +23,6 @@ async def signup(
     service=Depends(UserService),
 ):
     """
-
-    ver 체크(x)-> 회원가입 프로세스 -> 세션저장 -> 세션 id 반환
     회원가입
 
     Parameters :
@@ -39,10 +44,8 @@ async def signup(
     )
 
 
-@router.put(
-    "/user", status_code=status.HTTP_200_OK
-)  #! put 에 안쓰고 users/{user_id} - user_id 를 통해
-async def update(user: User, service: UserService = Depends()):
+@router.put("/{user_id}", status_code=status.HTTP_200_OK)
+async def update(user_id: str, user: User, service: UserService = Depends()):
     """
     유저 정보 수정
 
@@ -59,17 +62,19 @@ async def update(user: User, service: UserService = Depends()):
             nickname : 닉네임
             created_at : 생성일자
     """
+    user.id = user_id
     signin_user = service.update_user(user)
     return JSONResponse(
         content=jsonable_encoder(signin_user), status_code=status.HTTP_200_OK
     )
 
 
-@router.get("/posts", status_code=status.HTTP_200_OK)  # 계층 구조에 따라서 작성 posts?user_id
-# 식별자를 path 에 넣고 property는 쿼리 파라미터
+@router.get("/posts", status_code=status.HTTP_200_OK)
 async def get_posts(
-    id: str, page: int, service: UserService = Depends()
-):  # id 라고 안하고 명확하게 작정
+    page: int,
+    session_data: SessionData = Depends(verify_session),
+    service: UserService = Depends(),
+):
     """
     유저가 작성한 게시글 목록
 
@@ -83,12 +88,16 @@ async def get_posts(
     user = User()
     user.id = id
 
-    posts = service.get_posts(id, page)
+    posts = service.get_posts(session_data.user_id, page)
     return JSONResponse(content=jsonable_encoder(posts), status_code=status.HTTP_200_OK)
 
 
 @router.get("/comments", status_code=status.HTTP_200_OK)
-async def get_comments(id: str, page: int, service: UserService = Depends()):
+async def get_comments(
+    page: int,
+    session_data: SessionData = Depends(verify_session),
+    service: UserService = Depends(),
+):
     """
     유저가 작성한 댓글 목록
 
@@ -99,16 +108,22 @@ async def get_comments(id: str, page: int, service: UserService = Depends()):
     Returns:
         List[Comment]
     """
-    comments = service.get_comments(id, page)
+    comments = service.get_comments(session_data.user_id, page)
     return JSONResponse(
         content=jsonable_encoder(comments), status_code=status.HTTP_200_OK
     )
 
 
 @router.delete(
-    "/user", status_code=status.HTTP_204_NO_CONTENT
-)  # ! DELETE users/ + token
-async def delete(id: str, password: str, service: UserService = Depends()):
+    "",
+    dependencies=[Depends(verify_authority_dependency)],
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete(
+    password: str,
+    session_data: SessionData = Depends(verify_session),
+    service: UserService = Depends(),
+):
     """
     유저 탈퇴
 
@@ -116,8 +131,6 @@ async def delete(id: str, password: str, service: UserService = Depends()):
         id : 유저id
         password : 비밀번호
     """
-    user = User()
-    user.id = id
-    user.password = password
+    user = User(id=session_data.user_id, password=password)
     service.delete_user(user)
     return JSONResponse(content=None, status_code=status.HTTP_204_NO_CONTENT)
