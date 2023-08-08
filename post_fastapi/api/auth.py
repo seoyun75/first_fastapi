@@ -1,4 +1,4 @@
-from api.user.user_dto import UserRequest
+from api.user.dto.user_request import UserRequest
 from fastapi import APIRouter, Depends, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse

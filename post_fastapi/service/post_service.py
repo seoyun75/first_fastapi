@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from api.post.post_request import PostUpdate
+from api.post.dto.post_request import PostUpdate
 from domain.post import Post
 from fastapi import Depends
 from repository.post_repository import PostRepository
