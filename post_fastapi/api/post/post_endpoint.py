@@ -1,16 +1,14 @@
 from typing import List
 
-from api.post.dto.get_posts_response import (
+from api.post.dto.request import CreatePostRequest, UpdatePostRequst
+from api.post.dto.response import (
     CreatePostResponse,
     GetPostResponse,
     GetPostsResponse,
     UpdatePostResponse,
 )
-from api.post.dto.post_request import PostUpdate
 from domain.post import Post
 from fastapi import APIRouter, Depends, Response, status
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse
 from service.post_service import PostService
 from tool.security.authorization import Authorization
 from tool.session import SessionData, verify_session
@@ -77,7 +75,6 @@ async def create(
 
     Parameter :
         post :
-            user: 작성자
             title: 제목
             content : 글 내용
 
@@ -101,7 +98,7 @@ async def create(
     status_code=status.HTTP_200_OK,
 )
 async def update_post(
-    post_id: int, post: PostUpdate, post_service: PostService = Depends()
+    post_id: int, post: UpdatePostRequst, post_service: PostService = Depends()
 ):
     """
     기존 게시물의 내용을 변경합니다.
@@ -112,14 +109,14 @@ async def update_post(
             user: 작성자
             title: 제목
             content : 글 내용
+
     Return :
-        Post :
-            user: 작성자
-            title: 제목
-            content : 글 내용
-            create_date : 생성 시간
-
-
+        "data" : {
+                    id: 게시글 id
+                    title: 제목
+                    content: 내용
+                    user_id: 작성자
+                 }
     """
     return UpdatePostResponse(data=post_service.update_post(post_id, post))
 
