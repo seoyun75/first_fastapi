@@ -9,6 +9,7 @@ class PostBase(SQLModel):
     title: str
     content: Optional[str]
 
+
 class Post(PostBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: Optional[str]
