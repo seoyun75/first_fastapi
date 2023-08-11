@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import List
 
-from api.post.dto.post_request import PostUpdate
 from domain.post import Post
 from fastapi import Depends
 from repository.post_repository import PostRepository
@@ -20,7 +19,7 @@ class PostService:
     def create_post(self, post: Post) -> Post:
         return self.post_repo.create(post)
 
-    def update_post(self, post_id: int, update_data: PostUpdate) -> Post:
+    def update_post(self, post_id: int, update_data: Post) -> Post:
         db_post = self.post_repo.get_one(post_id)
 
         return self.post_repo.update(self.replace_postdata(update_data, db_post))
