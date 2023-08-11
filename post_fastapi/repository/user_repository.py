@@ -10,6 +10,7 @@ class UserRepository:
         self.session = session
 
     def create_user(self, user: User) -> User:
+        print(type(user))
         self.session.add(user)
         self.session.commit()
         self.session.refresh(user)
