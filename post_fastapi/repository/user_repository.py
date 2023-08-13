@@ -1,5 +1,4 @@
 from db import get_session
-from domain.post import Post
 from domain.user import User
 from fastapi import Depends
 from sqlmodel import Session, select

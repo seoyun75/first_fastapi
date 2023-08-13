@@ -1,4 +1,3 @@
-from typing import Any
 from uuid import UUID, uuid4
 
 from fastapi import Depends, Header, Response

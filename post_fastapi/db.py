@@ -1,6 +1,4 @@
-from typing import Optional
 
-from domain.post import Post
 from sqlalchemy.ext.declarative import declarative_base
 from sqlmodel import Session, SQLModel, create_engine
 

@@ -1,5 +1,5 @@
 from re import match
-from typing import Annotated, List
+from typing import List
 
 from domain.comment import Comment
 from domain.user import User
