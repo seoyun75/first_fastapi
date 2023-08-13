@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from domain.post import PostBase
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field
 
 
 class UpdatePostRequst(PostBase):

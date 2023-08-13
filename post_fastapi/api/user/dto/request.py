@@ -1,7 +1,6 @@
-from datetime import datetime
 from typing import Optional
 
-from domain.user import User, UserBase
+from domain.user import UserBase
 
 
 class UpdateUserRequest(UserBase):

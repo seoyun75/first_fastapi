@@ -1,5 +1,4 @@
 from datetime import datetime
-from typing import List
 
 from domain.comment import CommentBase
 from domain.post import PostBase

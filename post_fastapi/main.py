@@ -3,9 +3,8 @@ from api import auth
 from api.comment import comment_endpoint
 from api.post import post_endpoint
 from api.user import user_endpoint
-from click import UUID
 from db import init_db
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 
 app = FastAPI()
 
