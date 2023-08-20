@@ -8,6 +8,7 @@ from api.post.dto.response import (
 )
 from domain.post import Post
 from fastapi import APIRouter, Depends, Response, status
+from fastapi.responses import PlainTextResponse
 from service.post_service import PostService
 from tool.security.authorization import Authorization
 from tool.session import SessionData, verify_session
