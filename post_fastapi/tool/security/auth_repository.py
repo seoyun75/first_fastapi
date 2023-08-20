@@ -16,5 +16,4 @@ class AuthRepository:
     def delete(self, id: str):
         db_comment = self.session.exec(select(Comment).where(Comment.id == id)).one()
         self.session.delete(db_comment)
-
         self.session.commit()

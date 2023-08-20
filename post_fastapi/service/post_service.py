@@ -1,3 +1,4 @@
+from sqlite3 import IntegrityError
 from typing import List
 
 from domain.post import Post
@@ -16,6 +17,9 @@ class PostService:
         return self.post_repo.get_one(post_id)
 
     def create_post(self, post: Post) -> Post:
+        if self.get_post(post.id):
+            raise IntegrityError()
+
         return self.post_repo.create(post)
 
     def update_post(self, post_id: int, update_data: Post) -> Post:
