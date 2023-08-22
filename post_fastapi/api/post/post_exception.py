@@ -1,5 +1,6 @@
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import JSONResponse
 
 
-def integrity_excption_handler(request, exc):
-    return PlainTextResponse(str("UNIQUE constraint failed"), status_code=400)
+def integrity_exception_handler(request, exc):
+    message = "UNIQUE constraint failed"
+    return JSONResponse(content={"message": message}, status_code=409)
