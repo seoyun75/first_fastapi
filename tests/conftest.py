@@ -30,10 +30,10 @@ def verify_test_session(session_id: UUID = Header()) -> SessionData:
 
 
 # ---db 설정
-@pytest.fixture(scope="session", name="session")
+@pytest.fixture(name="session")
 def session_fixture():
     engine = create_engine(
-        "sqlite:///test.db",
+        "sqlite://",
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
     )
