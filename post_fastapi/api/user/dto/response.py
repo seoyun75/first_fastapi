@@ -7,7 +7,6 @@ from sqlmodel import SQLModel
 
 
 class SignupResponseData(UserBase):
-    id: str
     created_at: datetime
 
 
@@ -16,7 +15,6 @@ class SignupResponse(SQLModel):
 
 
 class UpdateUserResponseData(UserBase):
-    id: str
     created_at: datetime
 
 
@@ -25,7 +23,6 @@ class UpdateUserResponse(SQLModel):
 
 
 class GetPostsByUserIdResponseData(PostBase):
-    id: str
     updated_at: datetime
 
 
@@ -34,7 +31,6 @@ class GetPostsByUserIdResponse(SQLModel):
 
 
 class GetCommentsByUserIdResponseData(CommentBase):
-    id: str
     updated_at: datetime
 
 

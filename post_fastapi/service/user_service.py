@@ -22,7 +22,7 @@ class UserService:
         self.page_limit = 3
 
     def create_user(self, user: User) -> User:
-        if self.user_repo.get_user_byid(user.id) != None:
+        if self.user_repo.get_user_byid(user.user_id) != None:
             raise HTTPException(status_code=400, detail="중복된 아이디입니다.")
 
         if not self.check_password(user.password):
@@ -38,7 +38,7 @@ class UserService:
         return signin_user
 
     def update_user(self, user: User) -> User:
-        db_user = self.user_repo.get_user_byid(user.id)
+        db_user = self.user_repo.get_user_byid(user.user_id)
 
         if db_user == None:
             raise HTTPException(status_code=404, detail="id 와 일치하는 유저정보 없음.")

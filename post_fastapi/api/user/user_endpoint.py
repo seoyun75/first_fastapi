@@ -6,20 +6,22 @@ from api.user.dto.response import (
     UpdateUserResponse,
 )
 from domain.user import User
-from fastapi import APIRouter, Depends, Response, status
+from fastapi import APIRouter, Depends, Header, Response, status
 from service.user_service import UserService
 from tool.security.authorization import Authorization
-from tool.session import SessionData, verify_session
+from tool.session import SessionData, del_session, verify_session
 
 router = APIRouter(prefix="/users")
 
 
 def verify_authority_dependency(
-    user: UserRequest,
+    user_id: str,
     session_data: SessionData = Depends(verify_session),
     auth=Depends(Authorization),
 ):
-    return auth.verify_authority(user, session_data.user_id)
+    return auth.verify_authority(
+        User(user_id=user_id, password=""), session_data.user_id
+    )
 
 
 @router.post(
@@ -48,8 +50,11 @@ async def signup(
     return SignupResponse(data=user_service.create_user(user))
 
 
-@router.put(
-    "/{user_id}", response_model=UpdateUserResponse, status_code=status.HTTP_200_OK
+@router.patch(
+    "/{user_id}",
+    dependencies=[Depends(verify_authority_dependency)],
+    response_model=UpdateUserResponse,
+    status_code=status.HTTP_200_OK,
 )
 async def update(
     user_id: str, user: UpdateUserRequest, user_service: UserService = Depends()
@@ -70,7 +75,7 @@ async def update(
                   created_at : 생성일자
                 }
     """
-    user.id = user_id
+    user.user_id = user_id
     return UpdateUserResponse(data=user_service.update_user(user))
 
 
@@ -100,8 +105,6 @@ async def get_posts(
                   }
                  ]
     """
-    user = User()
-    user.id = id
 
     return GetPostsByUserIdResponse(
         data=user_service.get_posts(session_data.user_id, page)
@@ -141,13 +144,13 @@ async def get_comments(
 
 
 @router.delete(
-    "",
+    "/{user_id}",
     dependencies=[Depends(verify_authority_dependency)],
     status_code=status.HTTP_204_NO_CONTENT,
 )
 async def delete(
+    user_id: str,
     password: str,
-    session_data: SessionData = Depends(verify_session),
     user_service: UserService = Depends(),
 ):
     """
@@ -157,6 +160,7 @@ async def delete(
         id : 유저id
         password : 비밀번호
     """
-    user = User(id=session_data.user_id, password=password)
+    user = UserRequest(user_id=user_id, password=password)
     user_service.delete_user(user)
+    del_session()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
