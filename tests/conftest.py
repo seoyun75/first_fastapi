@@ -16,6 +16,10 @@ in_memory_test = InMemoryTest()
 session_id = "b144e64a-d40a-43d8-a2ef-4c5039b87047"
 
 
+def set_session_id(test_client):
+    test_client.headers["session-id"] = session_id
+
+
 @pytest.fixture(scope="session", name="session_data")
 def create_test_session() -> None:
     in_memory_test.create(

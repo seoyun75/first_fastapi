@@ -4,8 +4,6 @@ from fastapi import Depends, Header, HTTPException, Response
 from fastapi_sessions.backends.implementations import InMemoryBackend
 from pydantic import BaseModel
 
-from tests.in_memory_test import InMemoryTest
-
 
 class SessionData(BaseModel):
     user_id: str
@@ -22,7 +20,10 @@ async def del_session(session_id: UUID = Header()) -> None:
 
 
 async def verify_session(session_id: UUID = Header()) -> SessionData:
-    return await in_memory_backend.read(session_id)
+    session_data = await in_memory_backend.read(session_id)
+    if not session_data:
+        raise Exception("No Content")
+    return session_data
 
 
 class SessionService:
