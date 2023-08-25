@@ -6,7 +6,6 @@ __pycache__/
 database.db
 ./database.db
 *.db
-./*.db
 
 
 # C extensions
