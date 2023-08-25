@@ -2,12 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from pytest import Session
 from repository.test_repository import TestRepository
-
-from tests.conftest import session_id
-
-
-def set_session_id(test_client):
-    test_client.headers["session-id"] = session_id
+from tests.conftest import session_id, set_session_id
 
 
 def test_create_post(client: TestClient, session):
@@ -31,10 +26,10 @@ def test_create_post(client: TestClient, session):
     assert data["user_id"] == "test_id"
 
 
-def test_fail_create_post(client: TestClient):
+def test_fail_create_post(client: TestClient, createpost):
     # given
     set_session_id(client)
-    
+
     # when
     response = client.post(
         "/posts",
@@ -48,7 +43,7 @@ def test_fail_create_post(client: TestClient):
 @pytest.fixture(name="createpost")
 def create_post_data(session: Session):
     TestRepository(session).create_post(
-        {"id": 2, "title": "title", "content": "content", "user_id": "test_id"}
+        {"id": 11, "title": "title", "content": "content", "user_id": "test_id"}
     )
 
 
@@ -62,6 +57,7 @@ def test_get_posts(client: TestClient, createpost):
 
 def test_update_post(
     client: TestClient,
+    createpost,
 ):
     # given
     set_session_id(client)
@@ -81,7 +77,7 @@ def test_update_post(
     assert data["user_id"] == "test_id"
 
 
-def test_delete_post(client: TestClient):
+def test_delete_post(client: TestClient, createpost):
     # given
     set_session_id(client)
 
