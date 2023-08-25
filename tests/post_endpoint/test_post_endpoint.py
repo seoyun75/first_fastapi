@@ -6,7 +6,7 @@ from repository.test_repository import TestRepository
 from tests.conftest import session_id, set_session_id
 
 @pytest.fixture()
-def befor(session: Session):
+def befor(session: Session) -> int:
     return TestRepository(session).count_posts()
 
 def test_create_post(client: TestClient, session: Session, befor: int):
@@ -29,7 +29,7 @@ def test_create_post(client: TestClient, session: Session, befor: int):
     assert data["user_id"] == "test_id"
 
 
-def test_fail_create_post(client: TestClient, session: Session, createpost, befor: int):
+def test_fail_create_post(client: TestClient, session: Session, createpost: Post, befor: int):
     # given
     set_session_id(client)
 
@@ -87,7 +87,7 @@ def test_update_post(
     assert data["user_id"] == "test_id"
 
 
-def test_delete_post(client: TestClient, session: Session, createpost, befor: int):
+def test_delete_post(client: TestClient, session: Session, createpost:Post, befor: int):
     # given
     set_session_id(client)
 
