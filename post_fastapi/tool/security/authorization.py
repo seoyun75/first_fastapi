@@ -1,5 +1,5 @@
 from fastapi import Depends
-from tool.security.auth_ropository import AuthRepository
+from tool.security.auth_repository import AuthRepository
 
 
 class Authorization:
@@ -8,7 +8,6 @@ class Authorization:
 
     def verify_authority(self, object, user_id: str) -> None:
         target = self.auth_repository.get_target(object)
-        print(object, user_id)
         if not target:
             raise Exception(args="No Content")
         elif target.user_id != user_id:

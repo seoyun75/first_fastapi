@@ -1,4 +1,4 @@
-from api.user.dto.user_request import UserRequest
+from api.user.dto.request import UserRequest
 from fastapi import APIRouter, Depends, Request, Response, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
@@ -29,7 +29,7 @@ async def signin(
             nickname : 닉네임
             created_at : 생성일자
     """
-    session_data = await session.create_session(service.signin(user).id, response)
+    session_data = await session.create_session(service.signin(user).user_id, response)
     return JSONResponse(
         content=jsonable_encoder(session_data), status_code=status.HTTP_201_CREATED
     )

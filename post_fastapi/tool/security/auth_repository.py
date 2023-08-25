@@ -11,6 +11,8 @@ class AuthRepository:
         self.session = session
 
     def get_target(self, object: Comment | Post | User):
+        if type(object) == User:
+            return self.session.get(type(object), object.user_id)
         return self.session.get(type(object), object.id)
 
     def delete(self, id: str):

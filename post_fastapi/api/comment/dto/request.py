@@ -1,9 +1,8 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlmodel import Field
-
 from domain.comment import CommentBase
+from sqlmodel import Field
 
 
 class CreateCommentRequest(CommentBase):

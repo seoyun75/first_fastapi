@@ -1,22 +1,24 @@
 import pytest
-from api.post.dto.request import CreatePostRequest
 from fastapi.testclient import TestClient
 from pytest import Session
 from repository.test_repository import TestRepository
+from tests.conftest import session_id, set_session_id
 
 
-def test_create_post(client: TestClient, session_data):
+def test_create_post(client: TestClient, session):
     # given
+    set_session_id(client)
+    befor = TestRepository(session).count_posts()
+
     # when
     response = client.post(
         "/posts",
-        headers={"session-id": "b144e64a-d40a-43d8-a2ef-4c5039b87047"},
         json={"id": 11, "title": "createtitle", "content": "create content"},
     )
 
     # then
     data = response.json()["data"]
-
+    assert befor + 1 == TestRepository(session).count_posts()
     assert response.status_code == 201
     assert data["id"] == "11"
     assert data["title"] == "createtitle"
@@ -24,38 +26,50 @@ def test_create_post(client: TestClient, session_data):
     assert data["user_id"] == "test_id"
 
 
-def test_fail_create_post(client: TestClient):
+def test_fail_create_post(client: TestClient, createpost):
+    # given
+    set_session_id(client)
+
     # when
     response = client.post(
         "/posts",
-        headers={"session-id": "b144e64a-d40a-43d8-a2ef-4c5039b87047"},
         json={"id": 11, "title": "createtitle", "content": "create content"},
     )
 
     # then
-
-    assert response.status_code == 400
+    assert response.status_code == 409
 
 
 @pytest.fixture(name="createpost")
 def create_post_data(session: Session):
     TestRepository(session).create_post(
-        {"id": 2, "title": "title", "content": "content", "user_id": "test_id"}
+        {"id": 11, "title": "title", "content": "content", "user_id": "test_id"}
     )
 
 
-def test_get_posts_(client: TestClient, createpost):
+def test_get_posts(client: TestClient, createpost):
+    # when
     response = client.get("/posts")
+
+    # then
     assert response.status_code == 200
 
 
-def test_update_post(client: TestClient):
+def test_update_post(
+    client: TestClient,
+    createpost,
+):
+    # given
+    set_session_id(client)
+
+    # when
     response = client.patch(
         "/posts/11",
-        headers={"session-id": "b144e64a-d40a-43d8-a2ef-4c5039b87047"},
         json={"title": "update title", "content": "update content"},
     )
     data = response.json()["data"]
+
+    # then
     assert response.status_code == 200
     assert data["id"] == "11"
     assert data["title"] == "update title"
@@ -63,10 +77,15 @@ def test_update_post(client: TestClient):
     assert data["user_id"] == "test_id"
 
 
-def test_delete_post(client: TestClient):
+def test_delete_post(client: TestClient, createpost):
+    # given
+    set_session_id(client)
+
+    # when
     response = client.delete(
         "/posts/11",
-        headers={"session-id": "b144e64a-d40a-43d8-a2ef-4c5039b87047"},
+        headers={"session-id": session_id},
     )
 
+    # then
     assert response.status_code == 204
