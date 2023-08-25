@@ -1,14 +1,17 @@
 import pytest
 from fastapi.testclient import TestClient
 from pytest import Session
+from domain.post import Post
 from repository.test_repository import TestRepository
 from tests.conftest import session_id, set_session_id
 
+@pytest.fixture()
+def befor(session: Session):
+    return TestRepository(session).count_posts()
 
-def test_create_post(client: TestClient, session):
+def test_create_post(client: TestClient, session: Session, befor: int):
     # given
     set_session_id(client)
-    befor = TestRepository(session).count_posts()
 
     # when
     response = client.post(
@@ -26,7 +29,7 @@ def test_create_post(client: TestClient, session):
     assert data["user_id"] == "test_id"
 
 
-def test_fail_create_post(client: TestClient, createpost):
+def test_fail_create_post(client: TestClient, session: Session, createpost, befor: int):
     # given
     set_session_id(client)
 
@@ -38,21 +41,28 @@ def test_fail_create_post(client: TestClient, createpost):
 
     # then
     assert response.status_code == 409
+    assert befor == TestRepository(session).count_posts()
 
 
 @pytest.fixture(name="createpost")
 def create_post_data(session: Session):
-    TestRepository(session).create_post(
+    return TestRepository(session).create_post(
         {"id": 11, "title": "title", "content": "content", "user_id": "test_id"}
     )
 
 
-def test_get_posts(client: TestClient, createpost):
+def test_get_posts(client: TestClient, createpost:Post):
     # when
     response = client.get("/posts")
 
     # then
+    data = response.json()["data"]
     assert response.status_code == 200
+    assert len(data) != 0
+    assert data[0]["id"] == str(createpost.id)
+    assert data[0]["title"] == createpost.title
+    assert data[0]["content"] == createpost.content
+    assert data[0]["user_id"] == createpost.user_id
 
 
 def test_update_post(
@@ -77,7 +87,7 @@ def test_update_post(
     assert data["user_id"] == "test_id"
 
 
-def test_delete_post(client: TestClient, createpost):
+def test_delete_post(client: TestClient, session: Session, createpost, befor: int):
     # given
     set_session_id(client)
 
@@ -89,3 +99,4 @@ def test_delete_post(client: TestClient, createpost):
 
     # then
     assert response.status_code == 204
+    assert befor - 1 == TestRepository(session).count_posts()
