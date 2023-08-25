@@ -1,6 +1,5 @@
-from fastapi import Depends, HTTPException
-
 from domain.comment import Comment
+from fastapi import Depends, HTTPException
 from repository.comment_repository import CommentRepository
 
 

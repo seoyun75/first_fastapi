@@ -1,8 +1,7 @@
-from fastapi import Depends
-from sqlmodel import Session, select
-
 from db import get_session
 from domain.comment import Comment
+from fastapi import Depends
+from sqlmodel import Session, select
 
 
 class CommentRepository:

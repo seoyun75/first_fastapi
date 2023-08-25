@@ -4,6 +4,7 @@ from pytest import Session
 from domain.user import User
 from repository.test_repository import TestRepository
 
+
 def test_signup(client: TestClient) -> None:
     response = client.post(
         "/users/signup",

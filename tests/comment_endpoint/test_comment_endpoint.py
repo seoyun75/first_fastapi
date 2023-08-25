@@ -58,7 +58,6 @@ def test_update_comment(client: TestClient, createcomment):
     )
     
     #then
-    print(createcomment)
     data = response.json()["data"]
     assert response.status_code == 200
     assert data["id"] == 11
