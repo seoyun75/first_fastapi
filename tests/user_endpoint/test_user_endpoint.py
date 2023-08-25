@@ -8,7 +8,11 @@ from repository.test_repository import TestRepository
 def test_signup(client: TestClient) -> None:
     response = client.post(
         "/users/signup",
-        json={"user_id": "test_id", "password": "Test_password", "nickname": "nickname"},
+        json={
+            "user_id": "test_id",
+            "password": "Test_password",
+            "nickname": "nickname",
+        },
     )
     data = response.json()
     assert response.status_code == 201
@@ -18,11 +22,12 @@ def test_signup(client: TestClient) -> None:
 
 @pytest.fixture(name="createuser")
 def create_user_data(session: Session) -> User:
-    TestRepository(session).create_user(User(user_id="test_id", password="Test_password", nickname="nickname"))
+    TestRepository(session).create_user(
+        User(user_id="test_id", password="Test_password", nickname="nickname")
+    )
 
 
-def test_update_user(client: TestClient, createuser)-> None:
-
+def test_update_user(client: TestClient, createuser) -> None:
     response = client.patch(
         "/users/test_id",
         headers={"session-id": "b144e64a-d40a-43d8-a2ef-4c5039b87047"},
@@ -40,25 +45,3 @@ def test_delete_user(client: TestClient, createuser: User):
     )
 
     assert response.status_code == 204
-'''
-
-
-
-def test_get_posts_by_user_id(client: TestClient):
-    response = client.get(
-        "posts"
-    )
-    
-    assert response.status_code == 200
-
-
-def test_get_comments_by_user_id(client: TestClient):
-    response = client.get(
-        "comments"
-    )
-    
-    assert response.status_code == 200
-
-
-
-'''

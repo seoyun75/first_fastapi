@@ -90,7 +90,7 @@ async def get_by_postid(post_id: int, page: int, service: CommentService = Depen
     status_code=status.HTTP_200_OK,
 )
 async def update_comment(
-    comment_id:int,
+    comment_id: int,
     comment: UpdateCommentRequest,
     session_data=Depends(verify_session),
     service: CommentService = Depends(),
@@ -121,9 +121,7 @@ async def update_comment(
     dependencies=[Depends(verify_authority_dependency)],
     status_code=status.HTTP_204_NO_CONTENT,
 )
-async def delete_comment(
-    comment_id:int, service: CommentService = Depends()
-):
+async def delete_comment(comment_id: int, service: CommentService = Depends()):
     """
     댓글 삭제
 
@@ -131,5 +129,3 @@ async def delete_comment(
         comment_id : 댓글id
     """
     service.delete_comment(comment_id)
-
-    return Response(status_code=status.HTTP_204_NO_CONTENT)
