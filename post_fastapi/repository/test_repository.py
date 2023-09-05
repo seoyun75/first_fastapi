@@ -9,13 +9,12 @@ class TestRepository:
     def __init__(self, session: Session) -> None:
         self.session = session
 
-    def create_post(self, post: Post) -> None:
+    def create_post(self, post: Post) -> Post:
         item = Post(**post)
         self.session.add(item)
         self.session.commit()
 
-    def count_posts(self) -> int:
-        return len(self.session.exec(select(Post)).all())
+        return self.session.get(Post, item.id)
 
     def create_user(self, user: User) -> None:
         self.session.add(user)
@@ -28,3 +27,12 @@ class TestRepository:
         self.session.commit()
 
         return self.session.exec(select(Comment)).all()
+
+    def count_posts(self) -> int:
+        return len(self.session.exec(select(Post)).all())
+
+    def count_users(self) -> int:
+        return len(self.session.exec(select(User)).all())
+
+    def count_comments(self) -> int:
+        return len(self.session.exec(select(Comment)).all())

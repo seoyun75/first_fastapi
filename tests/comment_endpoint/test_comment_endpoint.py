@@ -9,7 +9,12 @@ from repository.test_repository import TestRepository
 from tests.conftest import set_session_id
 
 
-def test_create_comment(client: TestClient, session_data):
+@pytest.fixture()
+def befor(session: Session) -> int:
+    return TestRepository(session).count_comments()
+
+
+def test_create_comment(client: TestClient, session: Session, befor: int):
     # given
     set_session_id(client)
 
@@ -23,13 +28,14 @@ def test_create_comment(client: TestClient, session_data):
     data = response.json()["data"]
 
     assert response.status_code == 201
-    assert data["id"] == 11  # 왜 타입이 int?
+    assert befor + 1 == TestRepository(session).count_comments()
+    assert data["id"] == 11 
     assert data["post_id"] == 11
     assert data["content"] == "create comment"
 
 
 @pytest.fixture(name="createcomment")
-def create_post_data(session: Session, session_data) -> Post:
+def create_comment_data(session: Session) -> List[Post]:
     return TestRepository(session).create_comment(
         {"id": 11, "post_id": 11, "content": "create comment", "user_id": "test_id"}
     )
@@ -48,7 +54,7 @@ def test_get_comments(client: TestClient, createcomment: List[Post]):
     assert data[0]["user_id"] == "test_id"
 
 
-def test_update_comment(client: TestClient, createcomment):
+def test_update_comment(client: TestClient, createcomment: List[Post]):
     # given
     set_session_id(client)
 
@@ -67,7 +73,7 @@ def test_update_comment(client: TestClient, createcomment):
     assert data["user_id"] == "test_id"
 
 
-def test_delete_comment(client: TestClient, createcomment):
+def test_delete_comment(client: TestClient, session: Session, createcomment: List[Post], befor: int):
     # given
     set_session_id(client)
 
@@ -79,3 +85,4 @@ def test_delete_comment(client: TestClient, createcomment):
 
     # then
     assert response.status_code == 204
+    assert befor - 1 == TestRepository(session).count_comments()
